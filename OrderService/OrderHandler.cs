@@ -8,11 +8,11 @@ namespace OrderService
 {
     public class OrderHandler : IHandleMessages<PlaceOrder>, IHandleMessages<CancelOrder>
     {
-        private static readonly ILog log = LogManager.GetLogger<OrderHandler>();
-        private static readonly Random _random = new Random();
+        private readonly ILog _log = LogManager.GetLogger<OrderHandler>();
+        private readonly Random _random = new Random();
         public async Task Handle(PlaceOrder message, IMessageHandlerContext context)
         {
-            log.Info($"Received PlaceOrder, OrderId = {message.OrderId}");
+            _log.Info($"Received PlaceOrder, OrderId = {message.OrderId}");
 
             // This is normally where some business logic would occur
             await Task.Delay(TimeSpan.FromSeconds(5));
@@ -28,14 +28,14 @@ namespace OrderService
                 OrderId = message.OrderId
             };
 
-            log.Info($"Publishing OrderPlaced, OrderId = {message.OrderId}");
+            _log.Info($"Publishing OrderPlaced, OrderId = {message.OrderId}");
 
             await context.Publish(orderPlaced);
         }
         
         public Task Handle(CancelOrder message, IMessageHandlerContext context)
         {
-            log.Info($"Received CancelOrder, OrderId = {message.OrderId}");
+            _log.Info($"Received CancelOrder, OrderId = {message.OrderId}");
             return Task.CompletedTask;
         }
     }
