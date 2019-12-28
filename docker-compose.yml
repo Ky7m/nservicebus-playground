@@ -1,0 +1,46 @@
+version: "2.4"
+services:
+    client_behavior_emulator:
+        image: client_behavior_emulator
+        build:
+            context: .
+            dockerfile: ./ClientBehaviorEmulator/Dockerfile
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+    order_service:
+        image: order_service
+        scale: 2
+        build:
+            context: .
+            dockerfile: ./OrderService/Dockerfile
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+    shipping_service:
+        image: shipping_service
+        scale: 2
+        build:
+            context: .
+            dockerfile: ./ShippingService/Dockerfile
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+    billing_service:
+        image: billing_service
+        scale: 2
+        build:
+            context: .
+            dockerfile: ./BillingService/Dockerfile
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+    rabbitmq:
+        image: "rabbitmq:3.8-management"
+        ports:
+            - "15672:15672"
+            - "5672:5672"
+        healthcheck:
+            test: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
+            interval: 10s
+            retries: 5
