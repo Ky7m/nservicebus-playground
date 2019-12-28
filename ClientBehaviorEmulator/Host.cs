@@ -6,13 +6,13 @@ using Shared;
 
 namespace ClientBehaviorEmulator
 {
-    class Host
+    internal class Host
     {
-        static readonly ILog log = LogManager.GetLogger<Host>();
+        private readonly ILog _log = LogManager.GetLogger<Host>();
 
-        IEndpointInstance endpoint;
+        private IEndpointInstance _endpoint;
 
-        public string EndpointName => "NServiceBusPlayground.ClientBehaviorEmulator";
+        public static string EndpointName => "NServiceBusPlayground.ClientBehaviorEmulator";
 
         public async Task Start()
         {
@@ -29,7 +29,7 @@ namespace ClientBehaviorEmulator
                 
                 endpointConfiguration.EnableInstallers();
 
-                endpoint = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
+                _endpoint = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
                 
                 var random = new Random();
                 
@@ -37,12 +37,12 @@ namespace ClientBehaviorEmulator
                 {
                     var orderId = Guid.NewGuid().ToString();
                     
-                    await PlaceOrder(endpoint, orderId);
+                    await PlaceOrder(_endpoint, orderId);
 
                     if (random.Next(0,5) == 0)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(5));
-                        await CancelOrder(endpoint, orderId);
+                        await CancelOrder(_endpoint, orderId);
                     }
 
                     await Task.Delay(TimeSpan.FromSeconds(10));
@@ -59,7 +59,7 @@ namespace ClientBehaviorEmulator
         {
             try
             {
-                await endpoint?.Stop();
+                await _endpoint?.Stop();
             }
             catch (Exception ex)
             {
@@ -73,7 +73,7 @@ namespace ClientBehaviorEmulator
             {
                 OrderId = orderId
             };
-            log.Info($"Sending PlaceOrder command, OrderId = {orderId}");
+            _log.Info($"Sending PlaceOrder command, OrderId = {orderId}");
             return session.Send(command);
         }
 
@@ -83,27 +83,15 @@ namespace ClientBehaviorEmulator
             {
                 OrderId = orderId
             };
-            log.Info($"Sending CancelOrder command,OrderId = {orderId}");
+            _log.Info($"Sending CancelOrder command,OrderId = {orderId}");
             return session.Send("NServiceBusPlayground.OrderService", command);
         }
 
-        async Task OnCriticalError(ICriticalErrorContext context)
+        private void FailFast(string message, Exception exception)
         {
             try
             {
-                await context.Stop();
-            }
-            finally
-            {
-                FailFast($"Critical error, shutting down: {context.Error}", context.Exception);
-            }
-        }
-
-        void FailFast(string message, Exception exception)
-        {
-            try
-            {
-                log.Fatal(message, exception);
+                _log.Fatal(message, exception);
             }
             finally
             {

@@ -8,8 +8,8 @@ namespace OrderService
 {
     public class OrderHandler : IHandleMessages<PlaceOrder>, IHandleMessages<CancelOrder>
     {
-        static ILog log = LogManager.GetLogger<OrderHandler>();
-        static Random _random = new Random();
+        private static readonly ILog log = LogManager.GetLogger<OrderHandler>();
+        private static readonly Random _random = new Random();
         public async Task Handle(PlaceOrder message, IMessageHandlerContext context)
         {
             log.Info($"Received PlaceOrder, OrderId = {message.OrderId}");

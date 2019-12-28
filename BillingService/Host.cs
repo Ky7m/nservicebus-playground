@@ -5,13 +5,13 @@ using NServiceBus.Logging;
 
 namespace BillingService
 {
-    class Host
+    public class Host
     {
-        static readonly ILog log = LogManager.GetLogger<Host>();
+        private readonly ILog _log = LogManager.GetLogger<Host>();
 
-        IEndpointInstance endpoint;
+        private IEndpointInstance _endpoint;
 
-        public string EndpointName => "NServiceBusPlayground.BillingService";
+        public static string EndpointName => "NServiceBusPlayground.BillingService";
 
         public async Task Start()
         {
@@ -25,7 +25,7 @@ namespace BillingService
                 
                 endpointConfiguration.EnableInstallers();
 
-                endpoint = await Endpoint.Start(endpointConfiguration);
+                _endpoint = await Endpoint.Start(endpointConfiguration);
             }
             catch (Exception ex)
             {
@@ -37,7 +37,7 @@ namespace BillingService
         {
             try
             {
-                await endpoint?.Stop();
+                await _endpoint?.Stop();
             }
             catch (Exception ex)
             {
@@ -45,23 +45,11 @@ namespace BillingService
             }
         }
 
-        async Task OnCriticalError(ICriticalErrorContext context)
+        private void FailFast(string message, Exception exception)
         {
             try
             {
-                await context.Stop();
-            }
-            finally
-            {
-                FailFast($"Critical error, shutting down: {context.Error}", context.Exception);
-            }
-        }
-
-        void FailFast(string message, Exception exception)
-        {
-            try
-            {
-                log.Fatal(message, exception);
+                _log.Fatal(message, exception);
             }
             finally
             {

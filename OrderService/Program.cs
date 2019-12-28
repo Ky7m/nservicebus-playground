@@ -4,37 +4,37 @@ using System.Threading.Tasks;
 
 namespace OrderService
 {
-    class Program
+    internal class Program
     {
-        static SemaphoreSlim semaphore = new SemaphoreSlim(0);
+        private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(0);
 
-        static async Task Main(string[] args)
+        private static async Task Main()
         {
             Console.CancelKeyPress += CancelKeyPress;
             AppDomain.CurrentDomain.ProcessExit += ProcessExit;
 
             var host = new Host();
 
-            Console.Title = host.EndpointName;
+            Console.Title = Host.EndpointName;
 
             await host.Start();
             await Console.Out.WriteLineAsync("Press Ctrl+C to exit...");
 
             // wait until notified that the process should exit
-            await semaphore.WaitAsync();
+            await Semaphore.WaitAsync();
 
             await host.Stop();
         }
 
-        static void CancelKeyPress(object sender, ConsoleCancelEventArgs e)
+        private static void CancelKeyPress(object sender, ConsoleCancelEventArgs e)
         {
             e.Cancel = true;
-            semaphore.Release();
+            Semaphore.Release();
         }
 
-        static void ProcessExit(object sender, EventArgs e)
+        private static void ProcessExit(object sender, EventArgs e)
         {
-            semaphore.Release();
+            Semaphore.Release();
         }
     }
 }
