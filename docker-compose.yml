@@ -32,9 +32,25 @@ services:
             dockerfile: ./BillingService/Dockerfile
         depends_on:
             - rabbitmq
-                
-                
-    
+                  
+    traefik:
+        image: "traefik:v2.1"
+        command:
+            - "--log.level=DEBUG"
+            - "--api.insecure=true"
+            - "--providers.docker=true"
+            - "--providers.docker.exposedbydefault=false"
+            - "--entrypoints.rabbitmq-ui.address=:15672"
+            - "--entrypoints.rabbitmq.address=:5672"
+        ports:
+            - "8080:8080"
+            - "15672:15672"
+            - "5672:5672"
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        depends_on:
+            - rabbitmq
+              
     rabbitmq:
         image: rabbitmq-cluster
         hostname: rabbitmq
@@ -43,6 +59,11 @@ services:
         build:
             context: .
             dockerfile: ./Dockerfile
-        ports:
-            - "15672:15672"
-            - "5672:5672"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.rabbitmq-ui.rule=Host(`localhost`)"
+            - "traefik.http.routers.rabbitmq-ui.entrypoints=rabbitmq-ui"
+            - "traefik.http.services.rabbitmq-ui.loadbalancer.server.port=15672"
+            - "traefik.tcp.routers.rabbitmq.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.rabbitmq.entrypoints=rabbitmq"
+            - "traefik.tcp.services.rabbitmq.loadbalancer.server.port=5672"
