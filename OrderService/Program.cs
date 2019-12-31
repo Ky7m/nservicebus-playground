@@ -18,7 +18,6 @@ namespace OrderService
             Console.Title = Host.EndpointName;
 
             await host.Start();
-            await Console.Out.WriteLineAsync("Press Ctrl+C to exit...");
 
             // wait until notified that the process should exit
             await Semaphore.WaitAsync();

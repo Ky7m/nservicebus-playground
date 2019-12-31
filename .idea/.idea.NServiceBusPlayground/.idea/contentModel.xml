@@ -38,6 +38,7 @@
         <e p="Program.cs" t="Include" />
       </e>
       <e p="docker-compose.yml" t="Include" />
+      <e p="Dockerfile" t="Include" />
       <e p="NServiceBusPlayground.sln" t="IncludeFlat" />
       <e p="OrderService" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -56,6 +57,8 @@
         <e p="Program.cs" t="Include" />
       </e>
       <e p="packages" t="ExcludeRecursive" />
+      <e p="pre-entrypoint.sh" t="Include" />
+      <e p="rabbitmq-cluster" t="Include" />
       <e p="Shared" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="CancelOrder.cs" t="Include" />

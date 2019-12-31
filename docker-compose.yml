@@ -1,46 +1,48 @@
-version: "2.4"
+version: "3"
 services:
-    client_behavior_emulator:
-        image: client_behavior_emulator
+
+    client-behavior-emulator:
+        image: client-behavior-emulator
         build:
             context: .
             dockerfile: ./ClientBehaviorEmulator/Dockerfile
         depends_on:
-            rabbitmq:
-                condition: service_healthy
-    order_service:
-        image: order_service
-        scale: 2
+            - rabbitmq
+
+    order-service:
+        image: order-service
         build:
             context: .
             dockerfile: ./OrderService/Dockerfile
         depends_on:
-            rabbitmq:
-                condition: service_healthy
-    shipping_service:
-        image: shipping_service
-        scale: 2
+            - rabbitmq
+
+    shipping-service:
+        image: shipping-service
         build:
             context: .
             dockerfile: ./ShippingService/Dockerfile
         depends_on:
-            rabbitmq:
-                condition: service_healthy
-    billing_service:
-        image: billing_service
-        scale: 2
+            - rabbitmq
+              
+    billing-service:
+        image: billing-service
         build:
             context: .
             dockerfile: ./BillingService/Dockerfile
         depends_on:
-            rabbitmq:
-                condition: service_healthy
+            - rabbitmq
+                
+                
+    
     rabbitmq:
-        image: "rabbitmq:3.8-management"
+        image: rabbitmq-cluster
+        hostname: rabbitmq
+        environment:
+            - ERLANG_COOKIE=abcdefg
+        build:
+            context: .
+            dockerfile: ./Dockerfile
         ports:
             - "15672:15672"
             - "5672:5672"
-        healthcheck:
-            test: ["CMD-SHELL", "if rabbitmqctl status; then \nexit 0 \nfi \nexit 1"]
-            interval: 10s
-            retries: 5

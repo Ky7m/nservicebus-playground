@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using NServiceBus;
 using NServiceBus.Logging;
+using Polly;
+using Polly.Contrib.WaitAndRetry;
 using Shared;
 
 namespace ClientBehaviorEmulator
@@ -16,20 +18,33 @@ namespace ClientBehaviorEmulator
 
         public async Task Start()
         {
+            var jittered = Backoff.DecorrelatedJitterBackoffV2(TimeSpan.FromMilliseconds(500),20, fastFirst: true);
+            var jitteredPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryAsync(jittered);
+            
             try
             {
-                var endpointConfiguration = new EndpointConfiguration(EndpointName);
-                var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                transport.ConnectionString("host=rabbitmq");
-                transport.UseConventionalRoutingTopology();
-                transport.Routing().RouteToEndpoint(
-                    messageType: typeof(PlaceOrder), 
-                    destination: "NServiceBusPlayground.OrderService"
+                await jitteredPolicy.ExecuteAsync(async () =>
+                    {
+                        var endpointConfiguration = new EndpointConfiguration(EndpointName);
+                        var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                        transport.ConnectionString("host=rabbitmq");
+                        transport.UseConventionalRoutingTopology();
+                        transport.Routing().RouteToEndpoint(
+                            messageType: typeof(PlaceOrder), 
+                            destination: "NServiceBusPlayground.OrderService"
+                        );
+                        /*
+                 * We recommend to only use the .EnableInstallers during a specific Installation/Upgrade stage and not when you would only start the endpoint.
+                 * This splits the installation from the actual messages processing which is often required by IT operations.
+                 * In general, the installation part uses administrative privileges which are not required when you are processing messages which you only want to run least privilege.
+                 */
+                        endpointConfiguration.EnableInstallers();
+                        
+                        _endpoint = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
+                    }
                 );
-                
-                endpointConfiguration.EnableInstallers();
-
-                _endpoint = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
                 
                 var random = new Random();
                 

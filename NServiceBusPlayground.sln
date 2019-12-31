@@ -11,6 +11,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{22A8C61A-B151-47D4-9958-28E7A8095A67}"
 ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
+	Dockerfile = Dockerfile
+	pre-entrypoint.sh = pre-entrypoint.sh
+	rabbitmq-cluster = rabbitmq-cluster
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShippingService", "ShippingService\ShippingService.csproj", "{D4366E21-23F0-406B-AB2D-280FE77607C4}"
