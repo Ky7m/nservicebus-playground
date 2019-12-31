@@ -60,7 +60,7 @@ namespace ClientBehaviorEmulator
                         await CancelOrder(_endpoint, orderId);
                     }
 
-                    await Task.Delay(TimeSpan.FromSeconds(10));
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
                 
             }

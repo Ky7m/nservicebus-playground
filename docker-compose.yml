@@ -6,32 +6,24 @@ services:
         build:
             context: .
             dockerfile: ./ClientBehaviorEmulator/Dockerfile
-        depends_on:
-            - rabbitmq
 
     order-service:
         image: order-service
         build:
             context: .
             dockerfile: ./OrderService/Dockerfile
-        depends_on:
-            - rabbitmq
 
     shipping-service:
         image: shipping-service
         build:
             context: .
             dockerfile: ./ShippingService/Dockerfile
-        depends_on:
-            - rabbitmq
               
     billing-service:
         image: billing-service
         build:
             context: .
             dockerfile: ./BillingService/Dockerfile
-        depends_on:
-            - rabbitmq
                   
     rabbitmq-cluster:
         image: "traefik:v2.1"
@@ -48,14 +40,52 @@ services:
             - "5672:5672"
         volumes:
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
-        depends_on:
-            - rabbitmq
               
-    rabbitmq:
+    rabbitmq-node-1:
         image: rabbitmq-cluster
-        hostname: rabbitmq
+        hostname: rabbitmq-node-1
         environment:
             - ERLANG_COOKIE=abcdefg
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.rabbitmq-ui.rule=Host(`localhost`)"
+            - "traefik.http.routers.rabbitmq-ui.entrypoints=rabbitmq-ui"
+            - "traefik.http.services.rabbitmq-ui.loadbalancer.server.port=15672"
+            - "traefik.tcp.routers.rabbitmq.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.rabbitmq.entrypoints=rabbitmq"
+            - "traefik.tcp.services.rabbitmq.loadbalancer.server.port=5672"
+              
+    rabbitmq-node-2:
+        image: rabbitmq-cluster
+        hostname: rabbitmq-node-2
+        links:
+            - rabbitmq-node-1
+        environment:
+            - ERLANG_COOKIE=abcdefg
+            - CLUSTER_WITH=rabbitmq-node-1
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.rabbitmq-ui.rule=Host(`localhost`)"
+            - "traefik.http.routers.rabbitmq-ui.entrypoints=rabbitmq-ui"
+            - "traefik.http.services.rabbitmq-ui.loadbalancer.server.port=15672"
+            - "traefik.tcp.routers.rabbitmq.rule=HostSNI(`*`)"
+            - "traefik.tcp.routers.rabbitmq.entrypoints=rabbitmq"
+            - "traefik.tcp.services.rabbitmq.loadbalancer.server.port=5672"
+
+    rabbitmq-node-3:
+        image: rabbitmq-cluster
+        hostname: rabbitmq-node-3
+        links:
+            - rabbitmq-node-1
+        environment:
+            - ERLANG_COOKIE=abcdefg
+            - CLUSTER_WITH=rabbitmq-node-1
         build:
             context: .
             dockerfile: ./Dockerfile
