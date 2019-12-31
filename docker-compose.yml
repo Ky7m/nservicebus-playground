@@ -33,7 +33,7 @@ services:
         depends_on:
             - rabbitmq
                   
-    traefik:
+    rabbitmq-cluster:
         image: "traefik:v2.1"
         command:
             - "--log.level=DEBUG"

@@ -29,7 +29,7 @@ namespace ShippingService
                         var endpointConfiguration = new EndpointConfiguration(EndpointName);
 
                         var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                        transport.ConnectionString("host=rabbitmq");
+                        transport.ConnectionString("host=rabbitmq-cluster");
                         transport.UseConventionalRoutingTopology();
                         /*
                          * We recommend to only use the .EnableInstallers during a specific Installation/Upgrade stage and not when you would only start the endpoint.

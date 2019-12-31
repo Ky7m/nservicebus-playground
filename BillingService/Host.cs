@@ -29,7 +29,7 @@ namespace BillingService
                         var endpointConfiguration = new EndpointConfiguration(EndpointName);
 
                         var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
-                        transport.ConnectionString("host=rabbitmq");
+                        transport.ConnectionString("host=rabbitmq-cluster");
                         transport.UseConventionalRoutingTopology();
 
                         /*
