@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ClientBehaviorEmulator
+namespace OrderGenerator
 {
     internal class Program
     {

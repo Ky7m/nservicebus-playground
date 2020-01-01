@@ -6,7 +6,7 @@ using Polly;
 using Polly.Contrib.WaitAndRetry;
 using Shared;
 
-namespace ClientBehaviorEmulator
+namespace OrderGenerator
 {
     internal class Host
     {
@@ -14,7 +14,7 @@ namespace ClientBehaviorEmulator
 
         private IEndpointInstance _endpoint;
 
-        public static string EndpointName => "NServiceBusPlayground.ClientBehaviorEmulator";
+        public static string EndpointName => "NServiceBusPlayground.OrderGenerator";
 
         public async Task Start()
         {

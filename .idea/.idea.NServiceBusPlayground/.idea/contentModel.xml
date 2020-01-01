@@ -22,24 +22,24 @@
         <e p="OrderPlacedHandler.cs" t="Include" />
         <e p="Program.cs" t="Include" />
       </e>
-      <e p="ClientBehaviorEmulator" t="IncludeRecursive">
+      <e p="docker-compose.yml" t="Include" />
+      <e p="Dockerfile" t="Include" />
+      <e p="NServiceBusPlayground.sln" t="IncludeFlat" />
+      <e p="OrderGenerator" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
-        <e p="ClientBehaviorEmulator.csproj" t="IncludeRecursive" />
         <e p="Dockerfile" t="Include" />
         <e p="Host.cs" t="Include" />
         <e p="license.xml" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
-              <e p="ClientBehaviorEmulator.AssemblyInfo.cs" t="Include" />
+              <e p="OrderGenerator.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
+        <e p="OrderGenerator.csproj" t="IncludeRecursive" />
         <e p="Program.cs" t="Include" />
       </e>
-      <e p="docker-compose.yml" t="Include" />
-      <e p="Dockerfile" t="Include" />
-      <e p="NServiceBusPlayground.sln" t="IncludeFlat" />
       <e p="OrderService" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Dockerfile" t="Include" />

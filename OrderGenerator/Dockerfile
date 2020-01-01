@@ -3,10 +3,10 @@ FROM mcr.microsoft.com/dotnet/core/runtime:3.1 AS base
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY . .
-WORKDIR /src/ClientBehaviorEmulator
+WORKDIR /src/OrderGenerator
 RUN dotnet publish -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT ["dotnet", "ClientBehaviorEmulator.dll"]
+ENTRYPOINT ["dotnet", "OrderGenerator.dll"]

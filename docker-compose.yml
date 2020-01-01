@@ -1,11 +1,11 @@
 version: "3"
 services:
 
-    client-behavior-emulator:
-        image: client-behavior-emulator
+    order-generator:
+        image: order-generator
         build:
             context: .
-            dockerfile: ./ClientBehaviorEmulator/Dockerfile
+            dockerfile: ./OrderGenerator/Dockerfile
 
     order-service:
         image: order-service
