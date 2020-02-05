@@ -40,6 +40,7 @@ services:
             - "5672:5672"
         volumes:
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
+            - "./enabled_plugins:/etc/rabbitmq/enabled_plugins"
               
     rabbitmq-node-1:
         image: rabbitmq-cluster
